@@ -1,0 +1,7 @@
+FOR v, e, p IN 2 OUTBOUND "profiles_smart/1:P172922" GRAPH "pokec_smart"
+  FILTER p.vertices[1].AGE == 18
+  RETURN v._key
+
+FOR v, e, p IN 2 OUTBOUND "profiles_random/1:P172922" GRAPH "pokec_random"
+  FILTER p.vertices[1].AGE == 18
+  RETURN v._key
