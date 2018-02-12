@@ -1,5 +1,5 @@
-Patent Citation Data Loader
-===========================
+Pokec Graph Data Loader
+=======================
 
 This repository contains all data needed to produce a Docker image that
 contains a graph that describes a social network. The original
@@ -29,16 +29,18 @@ To retrieve the data anywhere (where Docker is installed), use this command:
 
     docker run -it -v `pwd`:/data mchacki/pokecsmartgraph
 
-This will create four files in the current directory:
+This will create three files in the current directory:
 
     profiles_raw.json            - Vertices: User profiles
     relations_raw.json           - Edges: Relations between profiles 
+    createGraphs.js              - JS script to create graphs
 
-To import, simply run the following commands. Make sure that the arangosh command is run first. All later four can be done in an arbitrary order and even in parallel.:
+To import, simply run the following commands. Make sure that the arangosh command is run first. All later four can be done in an arbitrary order and even in parallel:
 Install an enterprise `arangosh` on your system and run:
 
-    arangosh --endpoint tcp://<IP>:<PORT> --javascript.execute "/data/createGraphs.js"
-    docker run -it -v `pwd`:/data arangodb/arangodb arangoimp --endpoint tcp://<IP>:<PORT> --collection profiles_random --file /data/profiles_raw.json --type json --threads 8
-    docker run -it -v `pwd`:/data arangodb/arangodb arangoimp --endpoint tcp://<IP>:<PORT> --collection relations_random --file /data/relations_raw.json --type json --threads 8 --from-collection-prefix "profiles_random" --to-collection-prefix "profiles_random"
-    docker run -it -v `pwd`:/data arangodb/arangodb arangoimp --endpoint tcp://<IP>:<PORT> --collection profiles_smart --file /data/profiles_raw.json --type json --threads 8
-    docker run -it -v `pwd`:/data arangodb/arangodb arangoimp --endpoint tcp://<IP>:<PORT> --collection relations_smart --file /data/relations_raw.json --type json --threads 8 --from-collection-prefix "profiles_smart" --to-collection-prefix "profiles_smart"
+    ARANGODB_ADDRESS=<IP>:<PORT>
+    arangosh --server.endpoint tcp://$ARANGODB_ADDRESS --javascript.execute "./createGraphs.js"
+    docker run -it --net=host -v `pwd`:/data arangodb/arangodb arangoimp --server.endpoint tcp://$ARANGODB_ADDRESS --collection profiles_random --file /data/profiles_raw.json --type json --threads 8
+    docker run -it --net=host -v `pwd`:/data arangodb/arangodb arangoimp --server.endpoint tcp://$ARANGODB_ADDRESS --collection relations_random --file /data/relations_raw.json --type json --threads 8 --from-collection-prefix "profiles_random" --to-collection-prefix "profiles_random"
+    docker run -it --net=host -v `pwd`:/data arangodb/arangodb arangoimp --server.endpoint tcp://$ARANGODB_ADDRESS --collection profiles_smart --file /data/profiles_raw.json --type json --threads 8
+    docker run -it --net=host -v `pwd`:/data arangodb/arangodb arangoimp --server.endpoint tcp://$ARANGODB_ADDRESS --collection relations_smart --file /data/relations_raw.json --type json --threads 8 --from-collection-prefix "profiles_smart" --to-collection-prefix "profiles_smart"
