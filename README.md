@@ -27,9 +27,10 @@ Loading of data with Docker image
 
 To retrieve the data anywhere (where Docker is installed), use this command:
 
-    docker run -it -v `pwd`:/data mchacki/pokecsmartgraph
+    docker run -it -e UID=`id -u` -e `GID=`id -g` -v `pwd`:/data mchacki/pokecsmartgraph
 
-This will create three files in the current directory:
+This will create three files in a subdirectory "pokec\_smart" of the
+current directory:
 
     profiles_raw.json            - Vertices: User profiles
     relations_raw.json           - Edges: Relations between profiles 
